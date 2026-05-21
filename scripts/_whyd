@@ -1,0 +1,111 @@
+#compdef whyd
+
+# ---------------------------------------------------------------------------
+# _whyd — zsh completion for whyd.py
+#
+# Installation:
+#   Place this file in a directory on your $fpath and run:
+#     compdef _whyd whyd
+#   Or source it directly in your .zshrc.
+#
+# Configuration:
+#   WHYD_EXE  — path/command for whyd (default: whyd)
+#   WHYD_DEBUG — set to 1 to enable debug logging to ~/whyd_comp.log
+# ---------------------------------------------------------------------------
+
+local _WHYD_EXE="${WHYD_EXE:-whyd}"
+
+_whyd_debug() {
+    [[ -n "$WHYD_DEBUG" ]] && echo "[whyd] $*" >> ~/whyd_comp.log
+}
+
+# ---------------------------------------------------------------------------
+# Completion sources — all read from cache files for instant response
+# ---------------------------------------------------------------------------
+
+__whyd_projects() {
+    local -a projects
+    local client_id=""
+
+    # Check if -c was already typed earlier in the command line
+    local i
+    for (( i = 1; i <= ${#words[@]}; i++ )); do
+        if [[ "${words[i]}" == "-c" && $(( i + 1 )) -le ${#words[@]} ]]; then
+            client_id="${words[$(( i + 1 ))]}"
+            break
+        fi
+    done
+
+    if [[ -n "$client_id" ]]; then
+        _whyd_debug "Filtering projects for client: $client_id"
+        projects=("${(@f)$($_WHYD_EXE -c "$client_id" -pcomp 2>/dev/null | tr -d "'")}")
+    elif [[ -f ~/.whyd/projectcache ]]; then
+        projects=("${(@f)$(tr -d "'" < ~/.whyd/projectcache)}")
+    fi
+
+    _whyd_debug "Projects: ${projects[@]}"
+    _describe 'Project' projects
+}
+
+__whyd_clients() {
+    local -a clients
+    [[ -f ~/.whyd/clientcache ]] && clients=("${(@f)$(tr -d "'" < ~/.whyd/clientcache)}")
+    _describe 'Client' clients
+}
+
+__whyd_messages() {
+    local -a messages
+    [[ -f ~/.whyd/messagecache ]] && messages=("${(@f)$(tr -d "'" < ~/.whyd/messagecache)}")
+    _describe 'Recent message' messages
+}
+
+__whyd_durations() {
+    local -a durations
+    durations=(
+        '5m:5 minutes'
+        '10m:10 minutes'
+        '15m:15 minutes'
+        '30m:30 minutes'
+        '45m:45 minutes'
+        '1h:1 hour'
+        '1h30m:1 hour 30 minutes'
+        '2h:2 hours'
+        '3h:3 hours'
+        '4h:4 hours'
+    )
+    _describe 'Duration' durations
+}
+
+# ---------------------------------------------------------------------------
+# Main completion function
+# ---------------------------------------------------------------------------
+
+_whyd() {
+    local context state state_descr line
+    typeset -A opt_args
+
+    _arguments -C \
+        '-n[Add new time entry (also requires -p, -t, -m)]' \
+        '-t[Duration to track]:duration:__whyd_durations' \
+        '-p[Project to track against]:project:__whyd_projects' \
+        {-m,--msg}'[Activity description (make this the last flag)]:message:__whyd_messages' \
+        '-s[Start the internal timer]' \
+        '-v[View current timer elapsed time]' \
+        '-x[Record elapsed timer time and reset]' \
+        '-clear[Stop and discard the current timer]' \
+        '-d[Delete a time entry by row index (use with -today/-week/-month)]:index' \
+        '-c[Filter results by client ID]:client:__whyd_clients' \
+        '-ap[List all projects and clients (parsable)]' \
+        '(-listtable)-apt[List all projects and clients (table view)]' \
+        '(-apt)-listtable[List all projects and clients (table view)]' \
+        '-today[Show time tracked today]' \
+        '-week[Show time tracked this week]' \
+        '-month[Show time tracked this month]' \
+        '-lastmonth[Show time tracked last month]' \
+        '-refresh[Refresh local caches from server]' \
+        '-pcomp[Output project list for shell completion]' \
+        '-ccomp[Output client list for shell completion]' \
+        '-mcomp[Output recent messages for shell completion]'
+}
+
+compdef _whyd whyd

@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "whyd"
+version = "0.1.0"
+description = "CLI time tracker for What Have You Done?!"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+dependencies = [
+    "requests",
+    "rich",
+    "python-dotenv",
+]
+
+[project.scripts]
+whyd = "whyd:main"
+
+[tool.setuptools]
+py-modules = ["whyd"]
