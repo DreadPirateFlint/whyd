@@ -15,28 +15,24 @@ _whyd_completions() {
     # Flags that take an argument
     case "$prev" in
         -p)
-            # Complete with full "ident: Project Name, Client" so user can see context
             if [[ -f ~/.whyd/projectcache ]]; then
-                local -a projects
+                local line
                 while IFS= read -r line; do
                     line="${line//\'/}"
-                    [[ -n "$line" ]] && projects+=("$line")
+                    [[ -z "$line" ]] && continue
+                    [[ -z "$cur" || "$line" == "$cur"* ]] && COMPREPLY+=("$line")
                 done < ~/.whyd/projectcache
-                COMPREPLY=( $(compgen -W "${projects[*]}" -- "$cur") )
-                compopt -o nospace 2>/dev/null
             fi
             return
             ;;
         -c)
-            # Complete with full "ident: Client Name" so user can see context
             if [[ -f ~/.whyd/clientcache ]]; then
-                local -a clients
+                local line
                 while IFS= read -r line; do
                     line="${line//\'/}"
-                    [[ -n "$line" ]] && clients+=("$line")
+                    [[ -z "$line" ]] && continue
+                    [[ -z "$cur" || "$line" == "$cur"* ]] && COMPREPLY+=("$line")
                 done < ~/.whyd/clientcache
-                COMPREPLY=( $(compgen -W "${clients[*]}" -- "$cur") )
-                compopt -o nospace 2>/dev/null
             fi
             return
             ;;
