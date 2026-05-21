@@ -380,7 +380,7 @@ def load_config():
     load_dotenv(home_dir + "/.whyd/config")
     API_KEY = os.getenv("WHYD_API_KEY") or os.getenv("API_KEY")
     WHYD_URL = os.getenv("WHYD_URL")
-    HOME_DIR = os.getenv("HOME_DIR")
+    HOME_DIR = os.path.expanduser(os.getenv("HOME_DIR", "~/.whyd"))
 
 
 # def stripe_test():
