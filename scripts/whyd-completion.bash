@@ -16,23 +16,17 @@ _whyd_completions() {
     case "$prev" in
         -p)
             if [[ -f ~/.whyd/projectcache ]]; then
-                local line
-                while IFS= read -r line; do
-                    line="${line//\'/}"
-                    [[ -z "$line" ]] && continue
-                    [[ -z "$cur" || "$line" == "$cur"* ]] && COMPREPLY+=("$line")
-                done < ~/.whyd/projectcache
+                local idents
+                idents=$(tr -d "'" < ~/.whyd/projectcache | sed 's/:.*//' | tr -d ' ')
+                COMPREPLY=( $(compgen -W "$idents" -- "$cur") )
             fi
             return
             ;;
         -c)
             if [[ -f ~/.whyd/clientcache ]]; then
-                local line
-                while IFS= read -r line; do
-                    line="${line//\'/}"
-                    [[ -z "$line" ]] && continue
-                    [[ -z "$cur" || "$line" == "$cur"* ]] && COMPREPLY+=("$line")
-                done < ~/.whyd/clientcache
+                local idents
+                idents=$(tr -d "'" < ~/.whyd/clientcache | sed 's/:.*//' | tr -d ' ')
+                COMPREPLY=( $(compgen -W "$idents" -- "$cur") )
             fi
             return
             ;;
