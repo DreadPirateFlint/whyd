@@ -194,7 +194,12 @@ def get_clients(display=True):
     return jstrjson
 
 
+def normalize_ident(value):
+    return value.split(':')[0].strip()
+
+
 def send_new_time(durationmin, projectid, message):
+    projectid = normalize_ident(projectid)
     duration = durationmin * 1000 * 60
     url = WHYD_URL + 'api/newtime'
     headers = {}
