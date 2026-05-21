@@ -74,7 +74,13 @@ whyd -s
 whyd -x
 ```
 
-## zsh Completion
+## Shell Completion
+
+Tab completion covers all flags. `-p` completes from your project list, `-c` from clients, `-m` from recent messages, and `-t` from common durations.
+
+Run `whyd -refresh` to update the local caches after adding new projects or clients.
+
+### zsh
 
 Copy `scripts/_whyd` to a directory on your `$fpath`:
 
@@ -89,9 +95,19 @@ fpath=(~/.zsh/completions $fpath)
 autoload -Uz compinit && compinit
 ```
 
-Tab completion covers all flags, and `-p` completes from your project list, `-m` from recent messages, and `-t` from common durations.
+### bash
 
-Run `whyd -refresh` to update the local completion caches after adding new projects or clients.
+Add this to your `~/.bashrc`:
+
+```bash
+source /path/to/whyd-completion.bash
+```
+
+Or install system-wide:
+
+```bash
+sudo cp scripts/whyd-completion.bash /etc/bash_completion.d/whyd
+```
 
 ## License
 
