@@ -381,6 +381,7 @@ def load_config():
     API_KEY = os.getenv("WHYD_API_KEY") or os.getenv("API_KEY")
     WHYD_URL = os.getenv("WHYD_URL")
     HOME_DIR = os.path.expanduser(os.getenv("HOME_DIR", "~/.whyd"))
+    os.makedirs(HOME_DIR, exist_ok=True)
 
 
 # def stripe_test():
