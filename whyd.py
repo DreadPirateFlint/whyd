@@ -373,13 +373,32 @@ def clear_start_time():
     file.close()
 
 
+def first_run_setup(config_path):
+    print("\nWelcome to whyd! Let's get you set up.")
+    print("\nYou'll need your API key from your account page:")
+    print("  https://www.whyd.io/account\n")
+    api_key = input("Paste your API key here: ").strip()
+    if not api_key:
+        print("No API key entered. Exiting.")
+        sys.exit(1)
+    with open(config_path, "w") as f:
+        f.write(f"API_KEY={api_key}\n")
+        f.write("WHYD_URL=https://api.whyd.io/\n")
+    print(f"\nConfig saved to {config_path}. You're all set!\n")
+    return api_key
+
+
 def load_config():
     global API_KEY, WHYD_URL, HOME_DIR
 
     home_dir = os.path.expanduser("~")
-    load_dotenv(home_dir + "/.whyd/config")
+    config_path = home_dir + "/.whyd/config"
+    os.makedirs(home_dir + "/.whyd", exist_ok=True)
+    load_dotenv(config_path)
     API_KEY = os.getenv("WHYD_API_KEY") or os.getenv("API_KEY")
-    WHYD_URL = os.getenv("WHYD_URL")
+    if not API_KEY:
+        API_KEY = first_run_setup(config_path)
+    WHYD_URL = os.getenv("WHYD_URL", "https://api.whyd.io/")
     HOME_DIR = os.path.expanduser(os.getenv("HOME_DIR", "~/.whyd"))
     os.makedirs(HOME_DIR, exist_ok=True)
 
