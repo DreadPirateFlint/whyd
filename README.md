@@ -1,6 +1,6 @@
 # whyd — CLI for What Have You Done?!
 
-This is a command line utility designed to be used in conjunction with [What Have You Done?!](https://www.whyd.io), an incredibly flexible time tracking solution that also has unix command line plus an ios application. 
+This is a command line utility designed to be used in conjunction with [What Have You Done?!](https://www.whyd.io), an incredibly flexible time tracking solution that also has a unix command line and iOS application. 
 
 This repository is for the command-line utility which includes zsh tab completion.
 
