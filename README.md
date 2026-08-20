@@ -11,7 +11,7 @@ pip install whyd
 Or from source:
 
 ```bash
-git clone https://github.com/xrtic/whyd.git
+git clone https://github.com/DreadPirateFlint/whyd.git
 cd whyd
 pip install .
 ```
